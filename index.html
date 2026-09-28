@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rishon Jeffrey — AI Product Builder & Technopreneur</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Space Grotesk', var(--font-main);
+      --color-text: #ffffff;
+      --color-muted: rgba(255, 255, 255, 0.65);
+      --color-dim: rgba(255, 255, 255, 0.35);
+      --nav-height: 80px;
+    }
+
+    html,
+    body {
+      width: 100%;
+      background-color: #030303;
+      color: var(--color-text);
+      font-family: var(--font-main);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Fixed Background Canvas */
+    #animation-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: block;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Subtle Cinematic Vignette / Overlay */
+    .viewport-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 2;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.55) 100%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, transparent 20%, transparent 75%, rgba(0, 0, 0, 0.85) 100%);
+    }
+
+    /* Fixed Top Navigation */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: var(--nav-height);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 clamp(24px, 5vw, 64px);
+      z-index: 100;
+      pointer-events: auto;
+    }
+
+    .brand-logo {
+      font-family: var(--font-display);
+      font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #fff;
+      text-decoration: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .brand-logo:hover {
+      opacity: 0.8;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: clamp(20px, 3.5vw, 44px);
+      align-items: center;
+    }
+
+    nav a {
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.75);
+      text-decoration: none;
+      transition: color 0.3s ease, transform 0.2s ease;
+      display: inline-block;
+    }
+
+    nav a:hover {
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    /* Scroll Experience Content Container */
+    .content-wrapper {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+    }
+
+    /* Section Structure */
+    .section {
+      min-height: 100vh;
+      width: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: clamp(90px, 12vh, 120px) clamp(24px, 5vw, 64px) clamp(24px, 4vh, 48px);
+    }
+
+    /* ---------------- SECTION 1: HERO (Matching Reference Image) ---------------- */
+    #hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
+    .hero-middle-content {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      width: 100%;
+      margin-top: auto;
+      margin-bottom: 2vh;
+      padding-right: clamp(0px, 5vw, 8vw);
+    }
+
+    .role-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      text-align: left;
+    }
+
+    .role-item {
+      font-family: var(--font-main);
+      font-size: clamp(0.95rem, 1.4vw, 1.25rem);
+      font-weight: 500;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7);
+    }
+
+    .role-num {
+      font-size: 0.75em;
+      color: var(--color-muted);
+      font-weight: 400;
+    }
+
+    .hero-bottom-content {
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(3.4rem, 13.5vw, 13rem);
+      font-weight: 800;
+      letter-spacing: -0.045em;
+      line-height: 0.88;
+      color: #ffffff;
+      white-space: nowrap;
+      margin: 0;
+      padding: 0;
+      transform-origin: left bottom;
+      text-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+      user-select: none;
+    }
+
+    /* ---------------- SECTION 2: ABOUT ---------------- */
+    #about {
+      justify-content: center;
+      align-items: flex-start;
+      background: linear-gradient(180deg, transparent 0%, rgba(3, 3, 3, 0.6) 30%, rgba(3, 3, 3, 0.6) 70%, transparent 100%);
+      backdrop-filter: blur(2px);
+    }
+
+    .about-card {
+      max-width: 820px;
+      padding: clamp(24px, 4vw, 48px);
+      background: rgba(12, 12, 14, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .section-tag {
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 20px;
+      display: inline-block;
+    }
+
+    .about-heading {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .about-subheading {
+      font-size: clamp(1.05rem, 1.35vw, 1.25rem);
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.95);
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .about-desc {
+      font-size: clamp(0.98rem, 1.15vw, 1.15rem);
+      line-height: 1.75;
+      color: var(--color-muted);
+      font-weight: 400;
+      margin-bottom: 24px;
+    }
+
+    .about-quote {
+      font-family: var(--font-display);
+      font-size: clamp(1.1rem, 1.4vw, 1.35rem);
+      line-height: 1.5;
+      color: rgba(255, 255, 255, 0.9);
+      padding-left: 18px;
+      border-left: 2px solid rgba(255, 255, 255, 0.4);
+      margin-top: 20px;
+    }
+
+    .about-quote span {
+      display: block;
+      color: #ffffff;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    /* ---------------- SECTION 3: COURSES ---------------- */
+    #courses {
+      justify-content: center;
+      background: linear-gradient(180deg, transparent 0%, rgba(3, 3, 3, 0.6) 20%, rgba(3, 3, 3, 0.6) 80%, transparent 100%);
+      backdrop-filter: blur(2px);
+    }
+
+    .courses-container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+      margin-top: 32px;
+    }
+
+    .course-card {
+      background: rgba(15, 15, 18, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: clamp(28px, 3.5vw, 36px);
+      backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+    }
+
+    .course-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255, 255, 255, 0.25);
+      background: rgba(22, 22, 28, 0.7);
+    }
+
+    .course-num {
+      font-family: var(--font-display);
+      font-size: 0.82rem;
+      color: var(--color-dim);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+
+    .course-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.3rem, 1.8vw, 1.6rem);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+    }
+
+    .course-desc {
+      font-size: 0.95rem;
+      color: var(--color-muted);
+      line-height: 1.65;
+      margin-bottom: 24px;
+    }
+
+    .course-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .course-tag-pill {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 6px 12px;
+      border-radius: 100px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* ---------------- SECTION 4: PROJECTS ---------------- */
+    #projects {
+      justify-content: center;
+      background: linear-gradient(180deg, transparent 0%, rgba(3, 3, 3, 0.65) 20%, rgba(3, 3, 3, 0.65) 80%, transparent 100%);
+      backdrop-filter: blur(2px);
+    }
+
+    .projects-container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-top: 32px;
+    }
+
+    .project-card {
+      background: rgba(15, 15, 18, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 32px;
+      backdrop-filter: blur(16px);
+      transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+    }
+
+    .project-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255, 255, 255, 0.25);
+      background: rgba(22, 22, 28, 0.7);
+    }
+
+    .project-num {
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      color: var(--color-dim);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .project-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+
+    .project-desc {
+      font-size: 0.95rem;
+      color: var(--color-muted);
+      line-height: 1.6;
+    }
+
+    /* ---------------- SECTION 4: BUILDING ---------------- */
+    #building {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(180deg, transparent 0%, rgba(3, 3, 3, 0.7) 30%, rgba(3, 3, 3, 0.85) 100%);
+      backdrop-filter: blur(3px);
+    }
+
+    .building-content {
+      max-width: 800px;
+      padding: clamp(24px, 4vw, 48px);
+      background: rgba(12, 12, 14, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      backdrop-filter: blur(20px);
+    }
+
+    .building-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 18px;
+    }
+
+    .building-desc {
+      font-size: clamp(1rem, 1.3vw, 1.25rem);
+      line-height: 1.7;
+      color: var(--color-muted);
+    }
+
+    /* ---------------- FOOTER ---------------- */
+    footer {
+      position: relative;
+      z-index: 30;
+      width: 100%;
+      background: #070709;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: clamp(60px, 8vh, 100px) clamp(24px, 5vw, 64px) clamp(30px, 4vh, 48px);
+      color: #fff;
+    }
+
+    .footer-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(40px, 5vh, 60px);
+    }
+
+    .footer-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 36px;
+    }
+
+    .footer-brand-col {
+      max-width: 460px;
+    }
+
+    .footer-tag {
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+
+    .footer-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.2vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .footer-subtitle {
+      font-size: 0.98rem;
+      line-height: 1.65;
+      color: var(--color-muted);
+    }
+
+    .footer-links-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-width: min(100%, 360px);
+    }
+
+    .footer-link-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .footer-link-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateX(6px);
+    }
+
+    .link-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .link-info {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .link-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--color-dim);
+    }
+
+    .link-value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    .link-arrow {
+      font-size: 1.1rem;
+      color: var(--color-muted);
+      transition: transform 0.2s ease;
+    }
+
+    .footer-link-card:hover .link-arrow {
+      transform: translate(2px, -2px);
+      color: #fff;
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.85rem;
+      color: var(--color-dim);
+    }
+
+    .back-to-top {
+      color: var(--color-muted);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .back-to-top:hover {
+      color: #fff;
+    }
+
+    @media (max-width: 768px) {
+      .hero-middle-content {
+        padding-right: 0;
+        justify-content: flex-start;
+        margin-bottom: 16px;
+      }
+
+      .role-list {
+        text-align: left;
+      }
+
+      .courses-grid,
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-top {
+        flex-direction: column;
+      }
+
+      .footer-links-grid {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Fixed Canvas for High-Performance Smooth Video Scroll -->
+  <canvas id="animation-canvas"></canvas>
+
+  <!-- Vignette and Contrast Overlay -->
+  <div class="viewport-overlay"></div>
+
+  <!-- Navigation Bar (Clean & Updated) -->
+  <header>
+    <a href="#hero" class="brand-logo">Rishon Jeffrey</a>
+    <nav>
+      <ul>
+        <li><a href="#about">ABOUT</a></li>
+        <li><a href="#courses">COURSES</a></li>
+        <li><a href="#projects">PROJECTS</a></li>
+        <li><a href="#building">BUILDING</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Interactive Content Overlaid on Scroll Animation -->
+  <div class="content-wrapper">
+
+    <!-- SECTION 1: HERO (Directly matching the Reference Visual Layout) -->
+    <section class="section" id="hero">
+      <div></div>
+
+      <!-- Mid-Right Role List -->
+      <div class="hero-middle-content">
+        <div class="role-list">
+          <div class="role-item">
+            <span class="role-num"></span>
+            <span>AI PRODUCT BUILDER</span>
+          </div>
+          <div class="role-item">
+            <span class="role-num"></span>
+            <span>TECHNOPRENEUR.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Edge-to-Edge Typography -->
+      <div class="hero-bottom-content">
+        <h1 class="hero-title">Rishon Jeffrey</h1>
+      </div>
+    </section>
+
+    <!-- SECTION 2: ABOUT -->
+    <section class="section" id="about">
+      <div class="about-card">
+        <span class="section-tag">( ABOUT )</span>
+        <h2 class="about-heading">Curious by nature. Builder by choice.</h2>
+        <p class="about-subheading">
+          I'm Rishon Jeffrey — a Computer Science Engineering student specializing in AI & Machine Learning.
+        </p>
+        <p class="about-desc">
+          I like exploring the space where technology meets ideas — building digital products, experimenting with AI,
+          and turning problems into things worth solving.
+        </p>
+        <div class="about-quote">
+          I don't want to simply learn how technology works.
+          <span>I want to see what I can do with it.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: COURSES -->
+    <section class="section" id="courses">
+      <div class="courses-container">
+        <span class="section-tag">( COURSES & SPECIALIZATIONS )</span>
+        <h2 class="about-heading" style="margin-bottom: 0;">Knowledge & Deep Tech</h2>
+        <div class="courses-grid">
+          <!-- Course Box 1 -->
+          <div class="course-card">
+            <div class="course-header">
+              <div class="course-num">01 / IIT Madras</div>
+              <h3 class="course-title">Introduction to Data Science and AI</h3>
+              <p class="course-desc">
+                An introduction to the foundations of data science and artificial intelligence, exploring how data and
+                AI can be used to understand problems and build intelligent solutions.
+              </p>
+            </div>
+            <div class="course-tags">
+              <span class="course-tag-pill">Data Science</span>
+              <span class="course-tag-pill">AI</span>
+              <span class="course-tag-pill">Machine Learning</span>
+            </div>
+          </div>
+
+          <!-- Course Box 2 -->
+          <div class="course-card">
+            <div class="course-header">
+              <div class="course-num">02 / Google for Startups × Scaler</div>
+              <h3 class="course-title">Startup School: Prompt to Prototype</h3>
+              <p class="course-desc">
+                A hands-on learning experience focused on turning ideas into prototypes using modern AI tools and
+                product-building approaches.
+            </div>
+            <div class="course-tags">
+              <span class="course-tag-pill">Generative AI</span>
+              <span class="course-tag-pill">Prototyping</span>
+              <span class="course-tag-pill">Product Development</span>
+              <span class="course-tag-pill">Entrepreneurship</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: PROJECTS -->
+    <section class="section" id="projects">
+      <div class="projects-container">
+        <span class="section-tag">( PROJECTS )</span>
+        <h2 class="about-heading" style="margin-bottom: 0;">Featured Endeavors</h2>
+        <div class="projects-grid">
+          <div class="project-card">
+            <div class="project-num">01 / AI Career Planner</div>
+            <h3 class="project-title">AI × Education × Career</h3>
+            <p class="project-desc">An AI-powered platform designed to help students understand their career goals,
+              identify skill gaps, and create personalized learning paths.</p>
+          </div>
+          <div class="project-card">
+            <div class="project-num">02 / Personal AI Web Assistant</div>
+            <h3 class="project-title">AI × Productivity × Web</h3>
+            <p class="project-desc">A personal AI-powered web assistant designed to understand natural-language
+              requests, provide intelligent assistance, and bring useful AI capabilities into one interactive workspace.
+            </p>
+          </div>
+          <div class="project-card">
+            <div class="project-num">03 / AI & Data Experiments</div>
+            <h3 class="project-title">AI × Data × Exploration</h3>
+            <p class="project-desc">A collection of experiments exploring artificial intelligence, data analysis,
+              automation, and emerging technologies.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: BUILDING -->
+    <section class="section" id="building">
+      <div class="building-content">
+        <span class="section-tag">( BUILDING )</span>
+        <h2 class="building-title">Crafting the Future of AI Products</h2>
+        <p class="building-desc">
+          Currently exploring agentic tool use, multimodal streaming architectures, and high-frequency intelligence
+          layers. Always engineering for extreme speed and refined aesthetics.
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <!-- FOOTER SECTION -->
+  <footer id="contact">
+    <div class="footer-container">
+      <div class="footer-top">
+        <div class="footer-brand-col">
+          <span class="footer-tag">GET IN TOUCH</span>
+          <h2 class="footer-title">Let's Connect & Build</h2>
+          <p class="footer-subtitle">
+            Open for AI product engineering, technopreneurship collaborations, and ambitious ideas worth building.
+          </p>
+        </div>
+
+        <div class="footer-links-grid">
+          <!-- Phone Number -->
+          <a href="tel:+919876543210" class="footer-link-card" id="footer-phone">
+            <div class="link-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path
+                  d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                </path>
+              </svg>
+            </div>
+            <div class="link-info">
+              <span class="link-label">PHONE NUMBER</span>
+              <span class="link-value">+91 988447472</span>
+            </div>
+            <span class="link-arrow">↗</span>
+          </a>
+
+          <!-- LinkedIn Profile -->
+          <a href="https://www.linkedin.com/in/rishon-jeffrey" target="_blank" rel="noopener noreferrer"
+            class="footer-link-card" id="footer-linkedin">
+            <div class="link-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                <rect x="2" y="9" width="4" height="12"></rect>
+                <circle cx="4" cy="4" r="2"></circle>
+              </svg>
+            </div>
+            <div class="link-info">
+              <span class="link-label">LINKEDIN PROFILE</span>
+              <span class="link-value">linkedin.com/in/rishon-jeffrey</span>
+            </div>
+            <span class="link-arrow">↗</span>
+          </a>
+
+          <!-- Instagram Profile -->
+          <a href="https://www.instagram.com/rishon.jeffrey/" target="_blank" rel="noopener noreferrer"
+            class="footer-link-card" id="footer-instagram">
+            <div class="link-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+              </svg>
+            </div>
+            <div class="link-info">
+              <span class="link-label">INSTAGRAM</span>
+              <span class="link-value">RISHON JEFFREY</span>
+            </div>
+            <span class="link-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© Rishon Jeffrey.</p>
+        <a href="#hero" class="back-to-top">Back to top ↑</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Lenis Smooth Scrolling Library -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script>
+    const frameCount = 49;
+    const canvas = document.getElementById('animation-canvas');
+    const context = canvas.getContext('2d', { alpha: false });
+
+    // Build frame path array
+    const frames = [];
+    for (let i = 0; i < frameCount; i++) {
+      const paddedIndex = String(i).padStart(3, '0');
+      frames.push(`frames/Man_adjusting_glasses_20260925171541 (1)_${paddedIndex}.jpg`);
+    }
+
+    const images = [];
+    let targetFrame = 0;
+    let currentFrame = 0;
+
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.round(window.innerWidth * dpr);
+      canvas.height = Math.round(window.innerHeight * dpr);
+      render(Math.round(currentFrame));
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+
+    function render(frameIndex) {
+      const idx = Math.min(frameCount - 1, Math.max(0, frameIndex));
+      const img = images[idx];
+      if (!img || !img.complete || img.naturalWidth === 0) return;
+
+      const cWidth = canvas.width;
+      const cHeight = canvas.height;
+
+      // Aspect ratio cover calculations
+      const imgRatio = img.naturalWidth / img.naturalHeight;
+      const canvasRatio = cWidth / cHeight;
+
+      let drawWidth, drawHeight, offsetX, offsetY;
+
+      if (canvasRatio > imgRatio) {
+        drawWidth = cWidth;
+        drawHeight = cWidth / imgRatio;
+        offsetX = 0;
+        offsetY = (cHeight - drawHeight) / 2;
+      } else {
+        drawWidth = cHeight * imgRatio;
+        drawHeight = cHeight;
+        offsetX = (cWidth - drawWidth) / 2;
+        offsetY = 0;
+      }
+
+      context.imageSmoothingEnabled = true;
+      context.imageSmoothingQuality = 'high';
+      context.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+    }
+
+    // Preload image sequence
+    frames.forEach((src, index) => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => {
+        if (index === 0) {
+          resizeCanvas();
+          render(0);
+        }
+      };
+      images.push(img);
+    });
+
+    // Update target frame position from scroll - finishes animation at start of footer
+    function updateScroll(scrollY) {
+      const footer = document.querySelector('footer');
+      const maxScroll = footer
+        ? Math.max(1, footer.offsetTop - window.innerHeight)
+        : (document.documentElement.scrollHeight - window.innerHeight);
+
+      if (maxScroll <= 0) return;
+      const progress = Math.max(0, Math.min(1, scrollY / maxScroll));
+      targetFrame = progress * (frameCount - 1);
+    }
+
+    // Initialize Lenis smooth scroll
+    let lenis = null;
+    if (typeof Lenis !== 'undefined') {
+      lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+        wheelMultiplier: 1.0,
+      });
+
+      lenis.on('scroll', (e) => {
+        updateScroll(e.scroll);
+      });
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!lenis) {
+        updateScroll(window.scrollY);
+      }
+    }, { passive: true });
+
+    // Smooth navigation anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          if (lenis) {
+            lenis.scrollTo(target);
+          } else {
+            target.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      });
+    });
+
+    // Animation Loop with lerp
+    function animate(time) {
+      if (lenis) {
+        lenis.raf(time);
+      }
+
+      const diff = targetFrame - currentFrame;
+      if (Math.abs(diff) > 0.0001) {
+        currentFrame += diff * 0.12;
+      } else {
+        currentFrame = targetFrame;
+      }
+
+      render(Math.round(currentFrame));
+      requestAnimationFrame(animate);
+    }
+
+    resizeCanvas();
+    requestAnimationFrame(animate);
+  </script>
+</body>
+
+</html>
